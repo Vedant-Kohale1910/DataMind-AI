@@ -1,0 +1,20 @@
+# Environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# API keys & tenants
+.env
+
+# Raw/processed data
+data/
+
+# Legacy local ChromaDB folder — no longer used now that the project
+# reads/writes Chroma Cloud instead. Safe to delete entirely; ignored
+# here in case an old copy still exists on disk.
+vectorstore/
+
+# OS / IDE
+.idea/
+.DS_Store
