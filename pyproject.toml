@@ -1,1 +1,2 @@
-[tool.vercel] entrypoint = "webapp.app:app"
+[tool.vercel]
+entrypoint = "webapp.app:app"
