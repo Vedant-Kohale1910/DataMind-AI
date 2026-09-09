@@ -217,7 +217,7 @@
       setTimeout(() => {
         addMessage(
           "bot",
-          "Hi there 👋 Ask me anything about your documents, and I'll retrieve the most relevant context before answering."
+          "Hi there 👋 Ask me anything about Machine learning and Data Science, I'll retrieve the most relevant context to solve your query"
         );
       }, 550);
     }
