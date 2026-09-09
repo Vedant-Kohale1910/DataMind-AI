@@ -1,26 +1,25 @@
-"""
-Shared Chroma Cloud connection for the whole project.
+# Shared Chroma Cloud connection for the whole project.
+#
+# Both embed_and_index.py (writing) and retriever.py (reading) import from
+# here, so there is exactly ONE place that knows how to connect to Chroma
+# Cloud and ONE place that defines the collection name. This matters going
+# forward: if you ever rename the collection or rotate credentials, you
+# only change it here.
+#
+# Embeddings are generated via Hugging Face's hosted Inference API
+# (HuggingFaceEndpointEmbeddings), NOT loaded locally. This is deliberate:
+# loading sentence-transformers + torch in-process was what exceeded
+# Render's free-tier 512MB RAM limit and crashed the deployed app. Calling
+# a hosted API instead means torch never needs to be installed or loaded
+# here at all.
+#
+# Requires four environment variables, set either in a local .env file
+# (see .env.example) or as secrets on whatever platform hosts this app:
+#     CHROMA_API_KEY
+#     CHROMA_TENANT
+#     CHROMA_DATABASE
+#     HF_API_TOKEN
 
-Both embed_and_index.py (writing) and retriever.py (reading) import from
-here, so there is exactly ONE place that knows how to connect to Chroma
-Cloud and ONE place that defines the collection name. This matters going
-forward: if you ever rename the collection or rotate credentials, you
-only change it here.
-
-Embeddings are generated via Hugging Face's hosted Inference API
-(HuggingFaceEndpointEmbeddings), NOT loaded locally. This is deliberate:
-loading sentence-transformers + torch in-process was what exceeded
-Render's free-tier 512MB RAM limit and crashed the deployed app. Calling
-a hosted API instead means torch never needs to be installed or loaded
-here at all.
-
-Requires four environment variables, set either in a local .env file
-(see .env.example) or as secrets on whatever platform hosts this app:
-    CHROMA_API_KEY
-    CHROMA_TENANT
-    CHROMA_DATABASE
-    HF_API_TOKEN
-"""
 
 import os
 import chromadb
@@ -38,12 +37,6 @@ _cloud_client = None
 
 
 def get_embeddings():
-    """
-    Lazily creates the embeddings client once per process. This calls
-    Hugging Face's hosted Inference API over HTTP rather than loading
-    the model locally — no torch, no sentence-transformers, no large
-    in-memory model.
-    """
     global _embeddings
     if _embeddings is None:
         hf_token = os.environ.get("HF_API_TOKEN")
@@ -62,7 +55,6 @@ def get_embeddings():
 
 
 def get_cloud_client():
-    """Returns a singleton Chroma Cloud client built from env vars."""
     global _cloud_client
     if _cloud_client is None:
         api_key = os.environ.get("CHROMA_API_KEY")
@@ -91,7 +83,6 @@ def get_cloud_client():
 
 
 def get_vectorstore():
-    """Returns a LangChain Chroma vectorstore backed by Chroma Cloud."""
     client = get_cloud_client()
     return Chroma(
         client=client,
@@ -101,7 +92,6 @@ def get_vectorstore():
 
 
 def get_cloud_client():
-    """Returns a singleton Chroma Cloud client built from env vars."""
     global _cloud_client
     if _cloud_client is None:
         api_key = os.environ.get("CHROMA_API_KEY")
@@ -130,7 +120,6 @@ def get_cloud_client():
 
 
 def get_vectorstore():
-    """Returns a LangChain Chroma vectorstore backed by Chroma Cloud."""
     client = get_cloud_client()
     return Chroma(
         client=client,
