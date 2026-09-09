@@ -175,6 +175,31 @@
   const closeChatBtn = document.getElementById("closeChatBtn");
   const chatInput = document.getElementById("chatInput");
 
+  // On mobile, the chat becomes a full-screen page, so the floating
+  // top-right theme toggle would otherwise sit directly on top of the
+  // header's delete/close buttons. Below ~640px, while the chat is open,
+  // move the SAME toggle element into the header's action row (next to
+  // the delete button) instead of leaving it floating — no duplicate
+  // checkbox, so it always stays in sync with the real theme state.
+  const themeToggleEl = document.getElementById("themeToggle");
+  const chatActionsEl = document.querySelector(".chat-panel__actions");
+  const MOBILE_MQ = window.matchMedia("(max-width: 640px)");
+
+  function placeThemeToggle() {
+    const chatOpen = chatPanel.classList.contains("is-open");
+    const shouldBeInline = chatOpen && MOBILE_MQ.matches;
+
+    if (shouldBeInline) {
+      if (themeToggleEl.parentElement !== chatActionsEl) {
+        chatActionsEl.insertBefore(themeToggleEl, closeChatBtn);
+        themeToggleEl.classList.add("theme-toggle--inline");
+      }
+    } else if (themeToggleEl.parentElement !== document.body) {
+      document.body.appendChild(themeToggleEl);
+      themeToggleEl.classList.remove("theme-toggle--inline");
+    }
+  }
+
   let hasGreeted = false;
 
   function openChat() {
@@ -184,6 +209,7 @@
     requestAnimationFrame(() => {
       chatPanel.classList.add("is-open");
       chatPanel.setAttribute("aria-hidden", "false");
+      placeThemeToggle();
     });
 
     if (!hasGreeted) {
@@ -204,11 +230,19 @@
     chatPanel.setAttribute("aria-hidden", "true");
     chatBackdrop.classList.remove("is-visible");
     stagePage.classList.remove("is-hidden");
+    placeThemeToggle();
   }
 
   startChatBtn.addEventListener("click", openChat);
   closeChatBtn.addEventListener("click", closeChat);
   chatBackdrop.addEventListener("click", closeChat);
+
+  // Keep the toggle correctly placed if the viewport crosses the mobile
+  // breakpoint (e.g. rotating a tablet, or resizing a desktop window)
+  // while the chat happens to be open.
+  MOBILE_MQ.addEventListener
+    ? MOBILE_MQ.addEventListener("change", placeThemeToggle)
+    : MOBILE_MQ.addListener(placeThemeToggle); // Safari <14 fallback
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && chatPanel.classList.contains("is-open")) {

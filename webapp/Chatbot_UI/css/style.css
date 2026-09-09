@@ -418,7 +418,7 @@ button{ font-family: inherit; }
   box-shadow: 0 0 0 3px rgba(109,227,167,0.15);
   display:inline-block;
 }
-.chat-panel__actions{ display:flex; gap:0.6rem; }
+.chat-panel__actions{ display:flex; align-items:center; gap:0.6rem; }
 .icon-btn{
   width: 2.4rem; height: 2.4rem;
   border-radius:50%;
@@ -656,9 +656,10 @@ button{ font-family: inherit; }
 /* Large phones / small tablets (portrait) */
 @media (max-width: 640px){
   .theme-toggle{ top: 1rem; right: 1rem; }
-  .theme-toggle label{ width: 4.8rem; height: 2.5rem; }
-  .theme-toggle label::after{ width: 1.9rem; height: 1.9rem; }
-  .theme-toggle input:checked ~ label::after{ left: calc(100% - 2.15rem); }
+  .theme-toggle label{ width: 3.8rem; height: 2.1rem; }
+  .theme-toggle label::after{ width: 1.5rem; height: 1.5rem; }
+  .theme-toggle input:checked ~ label::after{ left: calc(100% - 1.75rem); }
+  .theme-toggle .icon{ font-size: 0.9rem; }
 
   .hero-sphere{ width: min(88vw, 56vh); top: 3vh; }
   .hero-text{ width: 92vw; top: 18%; }
@@ -668,14 +669,22 @@ button{ font-family: inherit; }
   .stage__subtitle{ white-space: normal; font-size: clamp(0.82rem, 3.6vw, 1rem); padding: 0 0.5rem; }
 
   .start-btn{
-    top: 87%;
+    top: 70%;
     padding: 1.05rem 2.1rem;
     font-size: 0.98rem;
     gap: 0.5rem;
   }
 
-  .chat-panel{ width: 96vw; height: 90vh; border-radius: 1.4rem; }
-  .chat-panel.is-open{ border-radius: 1.2rem; }
+  .chat-panel{
+    width: 100vw;
+    height: 100dvh;
+    max-height: none;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 0;
+  }
+  .chat-panel.is-open{ border-radius: 0; }
+  .chat-backdrop{ backdrop-filter: none; -webkit-backdrop-filter: none; }
   .chat-panel__header{ padding: 1rem 1.1rem; }
   .chat-avatar{ width: 2.6rem; height: 2.6rem; }
   .chat-panel__name{ font-size: 0.92rem; }
@@ -689,9 +698,34 @@ button{ font-family: inherit; }
 
   .chat-panel__footer{ padding: 0.9rem 1rem 1.05rem; }
   .finder{ padding: 0.4rem 0.4rem 0.4rem 1.05rem; gap: 0.5rem; }
-  /* 16px+ prevents iOS Safari from auto-zooming the page on focus */
-  .finder__input{ font-size: 1rem; padding: 0.5rem 0; }
+  /* 16px+ prevents iOS Safari from auto-zooming the page on focus.
+     min-width:0 overrides the flex item's default min-width:auto, which
+     otherwise refuses to shrink below the placeholder's intrinsic width
+     and pushes the send button off the edge of the screen. */
+  .finder__input{ font-size: 1rem; padding: 0.5rem 0; min-width: 0; flex: 1 1 0%; }
   .finder__send{ width: 2.4rem; height: 2.4rem; }
+
+  /* When the chat is open on mobile, the toggle is moved (via JS) into
+     the header's action row, right next to the delete button — sized to
+     match instead of floating as a large fixed pill over the header. */
+  .theme-toggle--inline{
+    position: static;
+    top: auto; right: auto;
+  }
+  .theme-toggle--inline label{
+    width: 3.1rem;
+    height: 1.75rem;
+  }
+  .theme-toggle--inline label::after{
+    width: 1.25rem;
+    height: 1.25rem;
+    top: 0.25rem;
+    left: 0.25rem;
+  }
+  .theme-toggle--inline input:checked ~ label::after{
+    left: calc(100% - 1.45rem);
+  }
+  .theme-toggle--inline .icon{ display:none; }
 }
 
 /* Small phones (iPhone SE / older Android widths) */
@@ -702,8 +736,8 @@ button{ font-family: inherit; }
   .stage__title{ font-size: clamp(1.6rem, 9vw, 2.1rem); }
   .stage__subtitle{ font-size: 0.78rem; }
   .start-btn{ padding: 0.9rem 1.7rem; font-size: 0.9rem; }
-  .chat-panel{ width: 98vw; height: 92vh; border-radius: 1.1rem; }
-  .chat-panel.is-open{ border-radius: 1rem; }
+  .chat-panel{ width: 100vw; height: 100dvh; border-radius: 0; }
+  .chat-panel.is-open{ border-radius: 0; }
   .chat-panel__header{ padding: 0.85rem 0.9rem; }
   .chat-panel__body{ padding: 0.9rem; }
   .msg{ max-width: 94%; }
@@ -718,7 +752,7 @@ button{ font-family: inherit; }
   .stage__title{ font-size: clamp(1.4rem, 5vw, 2rem); margin-bottom: 0.35rem; }
   .stage__subtitle{ font-size: 0.75rem; }
   .start-btn{ top: 92%; padding: 0.75rem 1.6rem; font-size: 0.85rem; }
-  .chat-panel{ width: 90vw; height: 94vh; }
+  .chat-panel{ width: 100vw; height: 100dvh; border-radius: 0; }
 }
 
 /* iOS notch / home-indicator safe areas */
