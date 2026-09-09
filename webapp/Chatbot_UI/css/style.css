@@ -332,6 +332,11 @@ button{ font-family: inherit; }
 @media (max-width: 900px){
   .chat-panel{ width: 92vw; height: 86vh; border-radius: 1.6rem; }
   .chat-panel.is-open{ border-radius: 1.4rem; }
+  .hero-sphere{ width: min(74vw, 58vh); }
+  .start-btn{ padding: 1.15rem 2.4rem; font-size: 1.05rem; }
+  .icon-btn{ width: 2.6rem; height: 2.6rem; }
+  .finder__send{ width: 2.7rem; height: 2.7rem; }
+  .finder__input{ font-size: 1rem; }
 }
 
 /* Header */
@@ -439,6 +444,8 @@ button{ font-family: inherit; }
   flex-direction:column;
   gap: 1.1rem;
   scroll-behavior:smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .chat-panel__body::-webkit-scrollbar{ width: 8px; }
 .chat-panel__body::-webkit-scrollbar-thumb{
@@ -642,14 +649,91 @@ button{ font-family: inherit; }
   color: var(--text-secondary);
 }
 
-/* Responsive tweaks */
-@media (max-width: 560px){
-  .theme-toggle{ top:1rem; right:1rem; }
-  .hero-sphere{ width: min(90vw, 60vh); top: 4vh; }
-  .start-btn{ padding: 1.05rem 2rem; font-size: 1rem; }
-  .msg{ max-width: 92%; }
-  .hero-text{ width: 92vw; }
+/* =======================================================================
+   RESPONSIVE — TABLET / PHONE / SMALL PHONE / LANDSCAPE
+   ======================================================================= */
+
+/* Large phones / small tablets (portrait) */
+@media (max-width: 640px){
+  .theme-toggle{ top: 1rem; right: 1rem; }
+  .theme-toggle label{ width: 4.8rem; height: 2.5rem; }
+  .theme-toggle label::after{ width: 1.9rem; height: 1.9rem; }
+  .theme-toggle input:checked ~ label::after{ left: calc(100% - 2.15rem); }
+
+  .hero-sphere{ width: min(88vw, 56vh); top: 3vh; }
+  .hero-text{ width: 92vw; top: 18%; }
   .hero-heading{ flex-wrap: wrap; gap: 0.5rem; }
-  .stage__title{ white-space: normal; font-size: clamp(2rem, 9vw, 2.8rem); }
-  .stage__subtitle{ white-space: normal; }
+  .brand-logo{ width: clamp(1.9rem, 8vw, 2.8rem); height: clamp(1.9rem, 8vw, 2.8rem); }
+  .stage__title{ white-space: normal; font-size: clamp(1.9rem, 8.5vw, 2.7rem); }
+  .stage__subtitle{ white-space: normal; font-size: clamp(0.82rem, 3.6vw, 1rem); padding: 0 0.5rem; }
+
+  .start-btn{
+    top: 87%;
+    padding: 1.05rem 2.1rem;
+    font-size: 0.98rem;
+    gap: 0.5rem;
+  }
+
+  .chat-panel{ width: 96vw; height: 90vh; border-radius: 1.4rem; }
+  .chat-panel.is-open{ border-radius: 1.2rem; }
+  .chat-panel__header{ padding: 1rem 1.1rem; }
+  .chat-avatar{ width: 2.6rem; height: 2.6rem; }
+  .chat-panel__name{ font-size: 0.92rem; }
+  .chat-panel__status{ font-size: 0.68rem; }
+  .icon-btn{ width: 2.5rem; height: 2.5rem; }
+
+  .chat-panel__body{ padding: 1.1rem; gap: 0.85rem; }
+  .msg{ max-width: 90%; gap: 0.45rem; }
+  .msg__avatar{ width: 1.8rem; height: 1.8rem; }
+  .msg__bubble{ padding: 0.7rem 0.9rem; font-size: 0.88rem; }
+
+  .chat-panel__footer{ padding: 0.9rem 1rem 1.05rem; }
+  .finder{ padding: 0.4rem 0.4rem 0.4rem 1.05rem; gap: 0.5rem; }
+  /* 16px+ prevents iOS Safari from auto-zooming the page on focus */
+  .finder__input{ font-size: 1rem; padding: 0.5rem 0; }
+  .finder__send{ width: 2.4rem; height: 2.4rem; }
+}
+
+/* Small phones (iPhone SE / older Android widths) */
+@media (max-width: 380px){
+  .hero-sphere{ width: min(92vw, 52vh); }
+  .sphere-icon{ width: 3.1rem; height: 3.1rem; margin: -1.55rem 0 0 -1.55rem; }
+  .sphere-icon img{ width: 1.6rem; height: 1.6rem; }
+  .stage__title{ font-size: clamp(1.6rem, 9vw, 2.1rem); }
+  .stage__subtitle{ font-size: 0.78rem; }
+  .start-btn{ padding: 0.9rem 1.7rem; font-size: 0.9rem; }
+  .chat-panel{ width: 98vw; height: 92vh; border-radius: 1.1rem; }
+  .chat-panel.is-open{ border-radius: 1rem; }
+  .chat-panel__header{ padding: 0.85rem 0.9rem; }
+  .chat-panel__body{ padding: 0.9rem; }
+  .msg{ max-width: 94%; }
+}
+
+/* Short / landscape viewports — the hero must not push the button off-screen */
+@media (max-height: 480px) and (orientation: landscape){
+  .theme-toggle{ top: 0.6rem; right: 0.6rem; }
+  .hero-sphere{ width: min(40vh, 46vw); top: 1.5vh; }
+  .hero-text{ top: 14%; }
+  .brand-logo{ width: 1.8rem; height: 1.8rem; }
+  .stage__title{ font-size: clamp(1.4rem, 5vw, 2rem); margin-bottom: 0.35rem; }
+  .stage__subtitle{ font-size: 0.75rem; }
+  .start-btn{ top: 92%; padding: 0.75rem 1.6rem; font-size: 0.85rem; }
+  .chat-panel{ width: 90vw; height: 94vh; }
+}
+
+/* iOS notch / home-indicator safe areas */
+@supports (padding: max(0px)){
+  .theme-toggle{
+    top: max(2rem, env(safe-area-inset-top) + 0.5rem);
+    right: max(2rem, env(safe-area-inset-right) + 0.5rem);
+  }
+  .chat-panel__footer{
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom) + 0.75rem);
+  }
+  @media (max-width: 640px){
+    .theme-toggle{
+      top: max(1rem, env(safe-area-inset-top) + 0.4rem);
+      right: max(1rem, env(safe-area-inset-right) + 0.4rem);
+    }
+  }
 }
