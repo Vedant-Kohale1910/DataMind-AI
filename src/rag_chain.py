@@ -12,10 +12,10 @@ from src.retriever import load_retriever
 LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "ollama")
 
 OLLAMA_MODEL = "llama3.1:8b"
-GROQ_MODEL = "openai/gpt-oss-20b"
+GROQ_MODEL = "openai/gpt-oss-20b"  # Groq's official replacement for the now-decommissioned llama-3.1-8b-instant
 temperature = 0.2
 
-prompt_template = """You are a helpful ML/Data Science tutor.
+prompt_template = r"""You are a helpful ML/Data Science tutor.
 Use the context below to answer the question. The context is made up of
 multiple short excerpts from video transcripts — they may not individually
 state the answer, but together they usually do. Synthesize a complete answer
@@ -28,6 +28,11 @@ answers it on its own.
 DO NOT mention or cite source video titles, timestamps, or filenames in your
 answer. Just provide a clear, direct explanation.
 
+If the answer involves mathematical notation, formulas, or equations, format
+them using LaTeX with dollar-sign delimiters: $...$ for inline math (e.g.
+$x^2$) and $$...$$ on their own line for standalone equations. Do not use
+\[...\] or \(...\) delimiters.
+
 Context:
 {context}
 
@@ -37,6 +42,12 @@ Answer:"""
 
 
 def get_llm():
+    """
+    Returns the chat model for whichever provider LLM_PROVIDER points to.
+    Both branches are imported lazily, so you only need the package for
+    whichever provider you're actually using installed (e.g. you don't
+    need langchain-groq installed just to run locally with Ollama).
+    """
     if LLM_PROVIDER == "groq":
         from langchain_groq import ChatGroq
         api_key = os.environ.get("GROQ_API_KEY")

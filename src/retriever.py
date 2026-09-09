@@ -2,6 +2,13 @@ from src.chroma_client import get_vectorstore
 
 
 def load_retriever(k=5, fetch_k=15, search_type="similarity"):
+    """
+    Returns a retriever backed by Chroma Cloud. No local vectorstore
+    folder is read or required — this connects over the network to the
+    same collection embed_and_index.py writes to, so anyone running this
+    app (including on a deployed server with no local data at all)
+    retrieves from the exact same knowledge base.
+    """
     vectordb = get_vectorstore()
 
     if search_type == "mmr":

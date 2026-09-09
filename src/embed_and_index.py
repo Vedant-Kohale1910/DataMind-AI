@@ -3,15 +3,27 @@ import json
 import glob
 from langchain_core.documents import Document
 from chromadb.errors import ChromaError
+
 from src.chroma_client import get_vectorstore, get_cloud_client, COLLECTION_NAME
 
-BATCH_SIZE = 200 #Since chroma cloud enforces a default per-request on new users (commonly 300)
+# Chroma Cloud enforces a default per-request "number of records" quota on
+# new accounts (commonly 300). Batches are kept safely under that so a
+# fresh account doesn't hit "Quota exceeded" on the very first upload.
+# If you've since requested a quota increase (see the link in any quota
+# error message), you can raise this back up for faster uploads.
+BATCH_SIZE = 200
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_JSON_DIR = os.path.join(PROJECT_ROOT, "data", "processed_jsons")
 
 
 def load_all_documents(json_dir):
+    """
+    Reads every video JSON in json_dir and returns (documents, ids).
+    Each chunk gets a deterministic id of "{video_number}_{chunk_index}",
+    so re-running this script never creates duplicates — it just
+    upserts (overwrite-if-same-id, insert-if-new).
+    """
     documents = []
     ids = []
     json_files = sorted(glob.glob(os.path.join(json_dir, "*.json")))
@@ -54,6 +66,16 @@ def load_all_documents(json_dir):
 
 
 def get_existing_ids():
+    """
+    Returns the set of chunk ids already present in the Chroma Cloud
+    collection. Checked at the individual chunk level (not per-video),
+    so a retry after a partial failure — e.g. a quota error mid-upload,
+    like the one that just happened — correctly re-uploads only the
+    specific chunks that never made it, rather than skipping an entire
+    video just because a FEW of its chunks got in during an earlier
+    successful batch. Returns an empty set if the collection doesn't
+    exist yet (first run).
+    """
     client = get_cloud_client()
     try:
         collection = client.get_collection(COLLECTION_NAME)
@@ -65,6 +87,22 @@ def get_existing_ids():
 
 
 def build_vectorstore(json_dir=DEFAULT_JSON_DIR, skip_existing=True, force=False):
+    """
+    Embeds every video JSON in json_dir and upserts it into Chroma Cloud.
+
+    This is the function you re-run whenever you add new videos, or after
+    a failed/interrupted upload:
+      - Drop new video JSONs into data/processed_jsons/
+      - Run: python -m src.embed_and_index
+      - Only chunks NOT already in Chroma Cloud get embedded and uploaded
+        (skip_existing=True, the default). This is checked per-chunk, so
+        it's safe to re-run after any failure without creating duplicates
+        or leaving a partially-uploaded video stuck half-indexed.
+
+    Set force=True to re-embed and overwrite everything regardless of
+    what's already indexed (useful if you changed the chunking strategy
+    and want to rebuild from scratch).
+    """
     documents, ids = load_all_documents(json_dir)
 
     if skip_existing and not force:
