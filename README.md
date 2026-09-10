@@ -66,6 +66,8 @@ The codebase is version-controlled on **GitHub** and deployed on **Render** as a
 | LLM                       | Groq — `openai/gpt-oss-20b` (Ollama supported for local dev)       |
 | Backend                   | FastAPI, Uvicorn, Pydantic                                         |
 | Frontend                  | HTML5, CSS3, Vanilla JavaScript                                    |
+| IDE                       | PyCharm, Antigravity                                                |
+| AI Agents                 | Claude, ChatGPT                                                     |
 | Deployment                | Render                                                              |
 | Version Control           | Git, GitHub                                                        |
 
