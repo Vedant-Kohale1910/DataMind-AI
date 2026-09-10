@@ -1,5 +1,5 @@
 
-# 🔷 DataMind AI — ML & Data Science RAG Chatbot
+# 🔷 DataMind AI — RAG based AI Assistant
 
 > A Retrieval-Augmented Generation chatbot that answers Machine Learning and Data Science questions, grounded entirely in a knowledge base built from real ML tutorial video transcripts.
 
